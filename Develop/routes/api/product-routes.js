@@ -4,27 +4,52 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 // The `/api/products` endpoint
 
 // get all products
-router.get('/', (req, res) => {
-  // find all products
-  // be sure to include its associated Category and Tag data
+// find all products
+// be sure to include its associated Category and Tag data
+// Create async/await function with a try/catch in it with a succesfull response fro a status of 200 and a error response with a stus off 500.
+router.get('/', async (req, res) => {
+  try {
+    const ProductData = await Product.findAll({
+      include: [{ model: Category }, { model: Tag }],
+    });
+    res.status(200).json(ProductData);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
 // get one product
-router.get('/:id', (req, res) => {
-  // find a single product by its `id`
-  // be sure to include its associated Category and Tag data
+// find a single product by its `id`
+// be sure to include its associated Category and Tag data
+router.get('/:id', async (req, res) => {
+  try {
+    const productData = await Product.findByPk(req.params.id, {
+      include: [{ model: Category }, { model: Tag }],
+    })
+    if (!productData) {
+      return res
+        .status(404)
+        .json({ message: `Could not find a product with an id of ${req.params.id}` });
+    }
+
+    res.status(200).json(productData);
+    // Catch for errors
+  } catch (err) {
+    // Send a response status of 500 and the error in JSON
+    res.status(500).json(err);
+  }
 });
 
 // create new product
 router.post('/', (req, res) => {
   /* req.body should look like this...
-    {
-      product_name: "Basketball",
-      price: 200.00,
-      stock: 3,
-      tagIds: [1, 2, 3, 4]
-    }
-  */
+  //   {
+  //     product_name: "Basketball",
+  //     price: 200.00,
+  //     stock: 3,
+  //     tagIds: [1, 2, 3, 4]
+  //   }
+  // */
   Product.create(req.body)
     .then((product) => {
       // if there's product tags, we need to create pairings to bulk create in the ProductTag model
@@ -89,8 +114,19 @@ router.put('/:id', (req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
-  // delete one product by its `id` value
+// delete one product by its `id` value
+router.delete('/:id', async (req, res) => {
+  try {
+    const prodDelete = await product.destroy({ where: { id: req.params.id } });
+    if (!prodDelete) {
+      return res
+        .status(400)
+        .json({ message: 'Could not find a product with an id of ${req.params.id}' });
+    }
+    res.status(200).json(prodDelete);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
 module.exports = router;
