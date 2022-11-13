@@ -1,10 +1,10 @@
 const express = require("express");
-const routes = require("./routes");
+const routes = require("./Develop/routes");
 const dotenv = require("dotenv");
 dotenv.config({ path: "env.default" })
 
 // import sequelize connection
-const sequelize = require("./config/connection");
+const sequelize = require("./Develop/config/connection");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
