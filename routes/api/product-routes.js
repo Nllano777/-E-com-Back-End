@@ -6,7 +6,7 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 // get all products
 // find all products
 // be sure to include its associated Category and Tag data
-// Create async/await function with a try/catch in it with a succesfull response fro a status of 200 and a error response with a stus off 500.
+
 router.get('/', async (req, res) => {
   try {
     const ProductData = await Product.findAll({
